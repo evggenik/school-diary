@@ -1,6 +1,7 @@
 package com.evggenn.school.person;
 
 
+import com.evggenn.school.role.Role;
 import com.evggenn.school.teacher.Teacher;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,13 +28,14 @@ public class Person {
     @Column(nullable = false)
     private String email;
 
-    private String role;
-
     @Column(nullable = false)
     private LocalDate birthDate;
 
     @Column(nullable = false)
     private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private LocalDateTime createdAt;
 
