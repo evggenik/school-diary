@@ -1,7 +1,5 @@
 package com.evggenn.school.teacher;
 
-import java.time.LocalDate;
-import java.util.Optional;
 
 public record TeacherDto(
         String firstName,
