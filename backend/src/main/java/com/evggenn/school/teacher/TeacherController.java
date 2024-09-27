@@ -14,7 +14,7 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @GetMapping("/{teacherId}")
-    public Teacher getTeacher(@PathVariable("teacherId") Long teacherId) {
+    public TeacherDto getTeacher(@PathVariable("teacherId") Long teacherId) {
         return teacherService.getTeacher(teacherId);
     }
 

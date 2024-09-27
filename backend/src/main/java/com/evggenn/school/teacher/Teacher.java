@@ -1,7 +1,6 @@
 package com.evggenn.school.teacher;
 
 import com.evggenn.school.person.Person;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +24,6 @@ public class Teacher {
 
     @OneToOne
     @JoinColumn(name = "person_id")
-//    @JsonManagedReference
-    @JsonIgnore
     private Person person;
 
 }

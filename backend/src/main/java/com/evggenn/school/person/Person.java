@@ -40,7 +40,6 @@ public class Person {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "person")
-//    @JsonBackReference
     private Teacher teacher;
 
 }
