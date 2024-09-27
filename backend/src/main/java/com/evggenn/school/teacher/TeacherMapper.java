@@ -5,6 +5,8 @@ import com.evggenn.school.role.Role;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class TeacherMapper {
@@ -16,6 +18,10 @@ public class TeacherMapper {
         );
     }
 
+    public List<TeacherDto> allTeacherDto(List<Teacher> teachers) {
+        return teachers.stream().map(this::teacherDto).toList();
+    }
+
     public Person toPerson(NewTeacherDto newTeacherDto) {
         Person person = new Person();
         person.setEmail(newTeacherDto.email());
@@ -25,6 +31,7 @@ public class TeacherMapper {
         person.setUserName(newTeacherDto.username());
         person.setBirthDate(newTeacherDto.birthDate());
         person.setCreatedAt(LocalDateTime.now());
+//        newTeacherDto.age().ifPresent(person::setAge);
         return person;
     }
 

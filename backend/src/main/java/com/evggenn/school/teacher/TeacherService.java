@@ -8,6 +8,8 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Data
@@ -24,18 +26,23 @@ public class TeacherService {
         return teacherMapper.teacherDto(teacher);
     }
 
+//    Если много учителей, возможно, стоит рассмотреть возможность пагинации
+//    или фильтрации, чтобы избежать загрузки слишком большого объема данных
+//    за один раз.
+    public List<TeacherDto> getAllTeacher() {
+        List<Teacher> allTeachers = teacherRepo.findAll();
+        return teacherMapper.allTeacherDto(allTeachers);
+    }
+
     @Transactional
     public Teacher createTeacher(NewTeacherDto newTeacherDto) {
-        // Преобразование DTO в Person
+
         Person person = teacherMapper.toPerson(newTeacherDto);
 
-        // Сохранение объекта Person в базе данных
         Person savedPerson = personRepo.save(person);
 
-        // Преобразование DTO в Teacher с использованием personId
         Teacher teacher = teacherMapper.toTeacher(newTeacherDto, savedPerson);
 
-        // Сохранение объекта Teacher в базе данных
         return teacherRepo.save(teacher);
     }
 
