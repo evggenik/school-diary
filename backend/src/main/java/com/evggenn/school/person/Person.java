@@ -19,20 +19,23 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "username",
+            unique = true,
             nullable = false)
     private String userName;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(unique = true,
+            nullable = false)
     private String email;
 
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String gender;
+    private Gender gender;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -41,5 +44,10 @@ public class Person {
 
     @OneToOne(mappedBy = "person")
     private Teacher teacher;
+
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
 
 }

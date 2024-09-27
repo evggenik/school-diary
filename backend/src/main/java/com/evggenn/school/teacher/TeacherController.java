@@ -1,10 +1,8 @@
 package com.evggenn.school.teacher;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/teachers")
 @RestController
@@ -16,6 +14,12 @@ public class TeacherController {
     @GetMapping("/{teacherId}")
     public TeacherDto getTeacher(@PathVariable("teacherId") Long teacherId) {
         return teacherService.getTeacher(teacherId);
+    }
+
+    @PostMapping
+    public ResponseEntity<Teacher> createTeacher(@RequestBody NewTeacherDto newTeacherDto) {
+        Teacher createdTeacher = teacherService.createTeacher(newTeacherDto);
+        return ResponseEntity.ok(createdTeacher);
     }
 
 }
