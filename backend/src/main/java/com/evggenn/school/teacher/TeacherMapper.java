@@ -2,11 +2,12 @@ package com.evggenn.school.teacher;
 
 import com.evggenn.school.person.Person;
 import com.evggenn.school.role.Role;
+import com.evggenn.school.teacher.dto.NewTeacherDto;
+import com.evggenn.school.teacher.dto.TeacherDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class TeacherMapper {

@@ -22,7 +22,7 @@ public class Teacher {
             nullable = false)
     private String lastName;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "person_id")
     private Person person;
 

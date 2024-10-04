@@ -1,4 +1,4 @@
-package com.evggenn.school.teacher;
+package com.evggenn.school.teacher.dto;
 
 import java.time.LocalDate;
 import java.util.Optional;

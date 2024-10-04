@@ -1,4 +1,4 @@
-package com.evggenn.school.teacher;
+package com.evggenn.school.teacher.dto;
 
 
 public record TeacherDto(
