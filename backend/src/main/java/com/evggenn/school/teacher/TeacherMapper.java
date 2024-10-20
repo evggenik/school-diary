@@ -13,9 +13,17 @@ import java.util.List;
 public class TeacherMapper {
 
     public TeacherDto teacherDto(Teacher teacher) {
+        Person person = teacher.getPerson();
         return new TeacherDto(
+                teacher.getId(),
                 teacher.getFirstName(),
-                teacher.getLastName()
+                teacher.getLastName(),
+                person.getUserName(),
+                person.getEmail(),
+                person.getBirthDate(),
+                person.getGender(),
+                person.getRole(),
+                person.getCreatedAt()
         );
     }
 
