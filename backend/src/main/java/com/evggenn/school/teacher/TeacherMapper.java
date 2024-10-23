@@ -16,6 +16,7 @@ public class TeacherMapper {
         Person person = teacher.getPerson();
         return new TeacherDto(
                 teacher.getId(),
+                person.getId(),
                 teacher.getFirstName(),
                 teacher.getLastName(),
                 person.getUserName(),
@@ -23,7 +24,8 @@ public class TeacherMapper {
                 person.getBirthDate(),
                 person.getGender(),
                 person.getRole(),
-                person.getCreatedAt()
+                person.getCreatedAt(),
+                person.getAvatarUrl()
         );
     }
 
@@ -40,6 +42,9 @@ public class TeacherMapper {
         person.setUserName(newTeacherDto.username());
         person.setBirthDate(newTeacherDto.birthDate());
         person.setCreatedAt(LocalDateTime.now());
+        if (newTeacherDto.avatarUrl() != null && !newTeacherDto.avatarUrl().isEmpty()) {
+            person.setAvatarUrl(newTeacherDto.avatarUrl());
+        }
 //        newTeacherDto.age().ifPresent(person::setAge);
         return person;
     }

@@ -1,7 +1,7 @@
 package com.evggenn.school.teacher.dto;
 
 import java.time.LocalDate;
-import java.util.Optional;
+
 
 public record NewTeacherDto(
         String firstName,
@@ -11,8 +11,6 @@ public record NewTeacherDto(
         String gender,
         String role,
         String username,
-        LocalDate birthDate
-
-//        Optional<Integer> age
-) {
-}
+        LocalDate birthDate,
+        String avatarUrl
+        ) { }

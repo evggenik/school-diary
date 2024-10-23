@@ -45,7 +45,8 @@ public class Person {
     @OneToOne(mappedBy = "person")
     private Teacher teacher;
 
-//    private Integer age;
+    @Column(name = "avatar")
+    private String avatarUrl;
 
     public enum Gender {
         MALE,

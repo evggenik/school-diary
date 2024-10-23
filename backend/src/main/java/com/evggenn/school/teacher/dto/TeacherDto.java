@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 public record TeacherDto(
         Long id,
+        Long personId,
         String firstName,
         String lastName,
         String userName,
@@ -16,6 +17,7 @@ public record TeacherDto(
         LocalDate birthDate,
         Person.Gender gender,
         Role role,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        String avatarUrl
 
 ) { }
