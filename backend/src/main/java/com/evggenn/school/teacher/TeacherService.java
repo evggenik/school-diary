@@ -4,6 +4,7 @@ import com.evggenn.school.exception.ResourceNotFoundException;
 import com.evggenn.school.person.Person;
 import com.evggenn.school.person.PersonRepo;
 import com.evggenn.school.person.PersonService;
+import com.evggenn.school.teacher.dto.EditTeacherDto;
 import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,14 @@ public class TeacherService {
     private final TeacherMapper teacherMapper;
     private final PersonService personService;
 
+    private void updateAvatarIfPresent(Person person,
+                                       MultipartFile avatarFile) throws IOException {
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarPath = personService.uploadAvatar(person.getId(), avatarFile);
+            person.setAvatarUrl(avatarPath);
+        }
+    }
+
     public TeacherDto getTeacher(Long id) {
         Teacher teacher = teacherRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -41,19 +50,17 @@ public class TeacherService {
     }
 
     @Transactional
-    public Teacher createTeacher(NewTeacherDto newTeacherDto, MultipartFile avatarFile) throws IOException {
+    public TeacherDto createTeacher(NewTeacherDto newTeacherDto, MultipartFile avatarFile) throws IOException {
 
         Person person = teacherMapper.toPerson(newTeacherDto);
         Person savedPerson = personRepo.save(person);
 
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarPath = personService.uploadAvatar(person.getId(), avatarFile); // Используем метод из PersonService
-            person.setAvatarUrl(avatarPath);
-        }
+        updateAvatarIfPresent(person, avatarFile);
 
         Teacher teacher = teacherMapper.toTeacher(newTeacherDto, savedPerson);
 
-        return teacherRepo.save(teacher);
+        teacherRepo.save(teacher);
+        return teacherMapper.teacherDto(teacher);
     }
 
     public void deleteTeacher(Long teacherId) {
@@ -61,6 +68,21 @@ public class TeacherService {
             throw new ResourceNotFoundException("Teacher not found with id: " + teacherId);
         }
         teacherRepo.deleteById(teacherId);
+    }
+
+    public TeacherDto editTeacher(long teacherId,
+                                  EditTeacherDto editTeacherDto,
+                                  MultipartFile avatarFile) throws IOException {
+        Teacher teacher = teacherRepo.findById(teacherId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "teacher with id [%s] not found".formatted(teacherId)));
+
+        Person person = teacherMapper.toEditPerson(teacher.getPerson(), editTeacherDto);
+
+        updateAvatarIfPresent(person, avatarFile);
+
+        personRepo.save(person);
+        return teacherMapper.teacherDto(teacher);
     }
 
 }

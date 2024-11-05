@@ -2,6 +2,7 @@ package com.evggenn.school.teacher;
 
 import com.evggenn.school.person.Person;
 import com.evggenn.school.role.Role;
+import com.evggenn.school.teacher.dto.EditTeacherDto;
 import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,14 @@ public class TeacherMapper {
         teacher.setFirstName(newTeacherDto.firstName());
         teacher.setLastName(newTeacherDto.lastName());
         return teacher;
+    }
+
+    public Person toEditPerson(Person person, EditTeacherDto editTeacherDto) {
+        person.setUserName(editTeacherDto.userName());
+        person.setEmail(editTeacherDto.email());
+        person.setBirthDate(editTeacherDto.birthDate());
+        person.setAvatarUrl(editTeacherDto.avatarUrl());
+        return person;
     }
 
 }
