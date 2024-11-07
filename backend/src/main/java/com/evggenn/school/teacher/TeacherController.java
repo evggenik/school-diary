@@ -2,9 +2,12 @@ package com.evggenn.school.teacher;
 
 import com.evggenn.school.exception.ResourceNotFoundException;
 import com.evggenn.school.person.PersonService;
+import com.evggenn.school.teacher.dto.EditTeacherDto;
 import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +20,13 @@ import java.util.List;
 @RequestMapping("/api/v1/teachers")
 @RestController
 @AllArgsConstructor
+
 public class TeacherController {
 
     private final TeacherService teacherService;
     private final PersonService personService;
+
+    private static final Logger logger = LoggerFactory.getLogger(TeacherController.class);
 
     @GetMapping("/{teacherId}")
     public TeacherDto getTeacher(@PathVariable("teacherId") Long teacherId) {
@@ -34,11 +40,20 @@ public class TeacherController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Teacher> createTeacher(@RequestPart NewTeacherDto newTeacherDto,
+    public ResponseEntity<TeacherDto> createTeacher(@RequestPart("newTeacherDto") NewTeacherDto newTeacherDto,
                                                  @RequestPart(value = "avatarFile", required = false)
                                                  MultipartFile avatarFile) throws IOException {
-        Teacher createdTeacher = teacherService.createTeacher(newTeacherDto, avatarFile);
+        TeacherDto createdTeacher = teacherService.createTeacher(newTeacherDto, avatarFile);
         return ResponseEntity.ok(createdTeacher);
+    }
+
+    @PutMapping(value = "/{teacherId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TeacherDto> editTeacher(@PathVariable("teacherId") Long teacherId,
+                                                  @RequestPart("editTeacherDto") EditTeacherDto editTeacherDto,
+                                                  @RequestPart(value = "avatarFile", required = false)
+                                                  MultipartFile avatarFile) throws IOException {
+        TeacherDto updatedTeacher = teacherService.editTeacher(teacherId, editTeacherDto, avatarFile);
+        return ResponseEntity.ok(updatedTeacher);
     }
 
     @DeleteMapping("/{teacherId}")
