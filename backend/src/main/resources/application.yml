@@ -3,9 +3,17 @@ server:
     include-message: always
 
 
+
+logging:
+  level:
+    com.evggenn.school.teacher: INFO
+
+
 cors:
-  allowed-origins: "*"
+  allowed-origins: "http://localhost:5173"
   allowed-methods: "*"
+
+
 
 spring:
   servlet:
