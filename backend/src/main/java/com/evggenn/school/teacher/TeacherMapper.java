@@ -39,7 +39,7 @@ public class TeacherMapper {
         person.setEmail(newTeacherDto.email());
         person.setPassword(newTeacherDto.password());
         person.setGender(Person.Gender.valueOf(newTeacherDto.gender()));
-        person.setRole(Role.valueOf(newTeacherDto.role().toUpperCase()));
+        person.setRole(newTeacherDto.role());
         person.setUserName(newTeacherDto.username());
         person.setBirthDate(newTeacherDto.birthDate());
         person.setCreatedAt(LocalDateTime.now());
@@ -62,6 +62,7 @@ public class TeacherMapper {
         person.setUserName(editTeacherDto.userName());
         person.setEmail(editTeacherDto.email());
         person.setBirthDate(editTeacherDto.birthDate());
+        person.setRole(editTeacherDto.role());
         person.setAvatarUrl(editTeacherDto.avatarUrl());
         return person;
     }
