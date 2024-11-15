@@ -67,6 +67,14 @@ public class TeacherService {
         if (!teacherRepo.existsById(teacherId)) {
             throw new ResourceNotFoundException("Teacher not found with id: " + teacherId);
         }
+
+        Teacher teacher = teacherRepo.findById(teacherId)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found with id: " + teacherId));
+
+        if (teacher.getPerson() != null) {
+            personService.deleteAvatar(teacher.getPerson().getId());
+        }
+
         teacherRepo.deleteById(teacherId);
     }
 

@@ -34,6 +34,25 @@ public class PersonService {
 
         return filePath;
     }
+
+    public void deleteAvatar(Long personId) {
+        Person person = personRepo.findById(personId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String userDir = uploadDir + "person_" + personId + "/";
+        File directory = new File(userDir);
+
+        if (directory.exists() && directory.isDirectory()) {
+            for (File file : directory.listFiles()) {
+                file.delete();
+            }
+            directory.delete();
+        }
+
+        person.setAvatarUrl(null);
+        personRepo.save(person);
+    }
+
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
             throw new RuntimeException("File not selected");
