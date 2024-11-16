@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Simple from "./components/shared/Navbar.jsx";
 import { getTeachers } from "./services/client.js";
 import { Spinner, Text } from "@chakra-ui/react";
-import TeachersList from "./components/TeachersList.jsx";
-import TeacherDetail from "./components/TeacherDetail.jsx";
-import DrawerForm from "./components/DrawerForm.jsx";
+import TeachersList from "./components/teachers/TeachersList.jsx";
+import TeacherDetail from "./components/teachers/TeacherDetail.jsx";
+import DrawerForm from "./components/teachers/DrawerForm.jsx";
 //import OtherUsersCard from './OtherUsersCard'; // Импортируйте компонент для других пользователей
 
 function App() {
@@ -43,12 +43,6 @@ function App() {
     setShowTeachers(false);
   };
 
-  // const handleUpdateTeacher = (updatedTeacher) => {
-  //   setTeachers(prev => prev.map(t => (t.id === updatedTeacher.id ? updatedTeacher : t)));
-  // };
-
- 
-
   if (loading) {
     return (
       <Simple setShowTeachers={setShowTeachers} setSelectedTeacher={setSelectedTeacher}>
@@ -67,7 +61,6 @@ function App() {
           selectedTeacher &&
           <TeacherDetail teacher={selectedTeacher}
             fetchTeachers={fetchTeachers} onBackToList={handleBackToList} 
-            // onUpdateTeacher={handleUpdateTeacher} 
             setSelectedTeacher={setSelectedTeacher}
           /> // Отображаем детали выбранного учителя, если он выбран
           )
