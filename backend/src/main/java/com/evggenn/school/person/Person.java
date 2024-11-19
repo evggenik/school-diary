@@ -18,7 +18,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "username",
+    @Column(name = "user_name",
             unique = true,
             nullable = false)
     private String userName;
@@ -30,7 +30,8 @@ public class Person {
             nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "birth_date",
+            nullable = false)
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
