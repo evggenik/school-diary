@@ -37,7 +37,7 @@ public class TeacherMapper {
         Person person = new Person();
         person.setEmail(newTeacherDto.email());
         person.setPassword(newTeacherDto.password());
-        person.setGender(Person.Gender.valueOf(newTeacherDto.gender()));
+        person.setGender(newTeacherDto.gender());
         person.setRole(newTeacherDto.role());
         person.setUserName(newTeacherDto.username());
         person.setBirthDate(newTeacherDto.birthDate());

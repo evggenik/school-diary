@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@ToString(exclude = "teacher")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Person {

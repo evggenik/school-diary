@@ -1,5 +1,6 @@
 package com.evggenn.school.teacher.dto;
 
+import com.evggenn.school.person.Person;
 import com.evggenn.school.role.Role;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ public record NewTeacherDto(
         String lastName,
         String email,
         String password,
-        String gender,
+        Person.Gender gender,
         Role role,
         String username,
         LocalDate birthDate,

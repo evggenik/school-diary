@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@ToString(exclude = "person")
 @Entity
 public class Teacher {
 

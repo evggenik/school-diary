@@ -5,6 +5,7 @@ import com.evggenn.school.person.Person;
 import com.evggenn.school.person.PersonRepo;
 import com.evggenn.school.person.PersonService;
 import com.evggenn.school.role.Role;
+import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,13 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +58,7 @@ class TeacherServiceTest {
         person1.setGender(Person.Gender.MALE);
         person1.setRole(Role.STUDENT);
         person1.setCreatedAt(LocalDateTime.of(1990, 10, 10, 10, 10));
-        person1.setAvatarUrl("uploads/person1_1/avatar1.jpg");
+//        person1.setAvatarUrl("uploads/person1_1/avatar1.jpg");
 
         teacher1 = new Teacher();
         teacher1.setId(1L);
@@ -86,8 +87,6 @@ class TeacherServiceTest {
         person2.setTeacher(teacher2);
 
         teacherList = List.of(teacher1, teacher2);
-        expectedTeacherDtoList = teacherList.stream().map(t -> teacherMapper.teacherDto(t)).toList();
-
     }
 
     @AfterEach
@@ -98,6 +97,7 @@ class TeacherServiceTest {
     @Test
     void getTeacher() {
         // Given
+        expectedTeacherDtoList = teacherList.stream().map(t -> teacherMapper.teacherDto(t)).toList();
         TeacherDto expectedDto = expectedTeacherDtoList.get(0);
         when(teacherRepo.findById(1L)).thenReturn(Optional.of(teacher1));
         when(teacherMapper.teacherDto(teacher1)).thenReturn(expectedDto);
@@ -120,6 +120,8 @@ class TeacherServiceTest {
 
     @Test
     void getAllTeacher() {
+        // Given
+        expectedTeacherDtoList = teacherList.stream().map(t -> teacherMapper.teacherDto(t)).toList();
         // When
         when(teacherRepo.findAll()).thenReturn(teacherList);
         when(teacherMapper.allTeacherDto(teacherList)).thenReturn(expectedTeacherDtoList);
@@ -132,13 +134,36 @@ class TeacherServiceTest {
     }
 
     @Test
-    void createTeacher() {
+    void createTeacher() throws IOException {
         // Given
+        NewTeacherDto newTeacherDto1 = new NewTeacherDto(
+                "Wasya", "Wasin", "person1@mail.foo",
+                "password", Person.Gender.MALE, Role.STUDENT,
+                "person1", LocalDate.of(1990, 10, 10),
+                null
+        );
+        when(teacherMapper.toPerson(newTeacherDto1)).thenReturn(person1);
+        when(personRepo.save(person1)).thenReturn(person1); // Настройка сохранения
+        when(teacherMapper.toTeacher(newTeacherDto1, person1)).thenReturn(teacher1);
+        when(teacherRepo.save(teacher1)).thenReturn(teacher1); // Настройка сохранения
+        when(teacherMapper.teacherDto(teacher1)).thenReturn(new TeacherDto(
+                1L, 1L,
+                "Wasya", "Wasin", "person1","person1@mail.foo",
+                LocalDate.of(1990, 10, 10), Person.Gender.MALE, Role.STUDENT,
+                LocalDateTime.of(1990, 10, 10, 10, 10), null
+                )
+        );
 
         // When
+        TeacherDto result = underTest.createTeacher(newTeacherDto1, null);
 
-        //Then
-
+        // Then
+        assertNotNull(result);
+        verify(teacherMapper).toPerson(newTeacherDto1);
+        verify(personRepo).save(person1);
+        verify(teacherMapper).toTeacher(newTeacherDto1, person1);
+        verify(teacherRepo).save(teacher1);
+        verify(teacherMapper).teacherDto(teacher1);
     }
 
     @Test
