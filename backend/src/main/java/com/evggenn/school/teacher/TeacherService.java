@@ -64,9 +64,9 @@ public class TeacherService {
     }
 
     public void deleteTeacher(Long teacherId) {
-        if (!teacherRepo.existsById(teacherId)) {
-            throw new ResourceNotFoundException("Teacher not found with id: " + teacherId);
-        }
+//        if (!teacherRepo.existsById(teacherId)) {
+//            throw new ResourceNotFoundException("Teacher not found with id: " + teacherId);
+//        }
 
         Teacher teacher = teacherRepo.findById(teacherId)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher not found with id: " + teacherId));
@@ -85,11 +85,11 @@ public class TeacherService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "teacher with id [%s] not found".formatted(teacherId)));
 
-        Person person = teacherMapper.toEditPerson(teacher.getPerson(), editTeacherDto);
+        Person editPerson = teacherMapper.toEditPerson(teacher.getPerson(), editTeacherDto);
 
-        updateAvatarIfPresent(person, avatarFile);
+        updateAvatarIfPresent(editPerson, avatarFile);
 
-        personRepo.save(person);
+        personRepo.save(editPerson);
         return teacherMapper.teacherDto(teacher);
     }
 

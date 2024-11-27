@@ -5,11 +5,13 @@ import com.evggenn.school.person.Person;
 import com.evggenn.school.person.PersonRepo;
 import com.evggenn.school.person.PersonService;
 import com.evggenn.school.role.Role;
+import com.evggenn.school.teacher.dto.EditTeacherDto;
 import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -19,9 +21,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TeacherServiceTest {
 
@@ -112,10 +115,13 @@ class TeacherServiceTest {
     void shouldThrowResourceNotFoundException_whenTeacherNotFound() {
         // Given
         Long id = 1L;
-        when(teacherRepo.findById(id)).thenReturn(Optional.empty()); // Настройка мока для отсутствия учителя
+        when(teacherRepo.findById(id)).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> underTest.getTeacher(id)); // Проверка, что выбрасывается исключение
+        assertThatThrownBy(() -> underTest.getTeacher(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                        .hasMessage("teacher with id [%s] not found".formatted(id));
+//        assertThrows(ResourceNotFoundException.class, () -> underTest.getTeacher(id)); // Проверка, что выбрасывается исключение
     }
 
     @Test
@@ -143,9 +149,9 @@ class TeacherServiceTest {
                 null
         );
         when(teacherMapper.toPerson(newTeacherDto1)).thenReturn(person1);
-        when(personRepo.save(person1)).thenReturn(person1); // Настройка сохранения
+        when(personRepo.save(person1)).thenReturn(person1);
         when(teacherMapper.toTeacher(newTeacherDto1, person1)).thenReturn(teacher1);
-        when(teacherRepo.save(teacher1)).thenReturn(teacher1); // Настройка сохранения
+        when(teacherRepo.save(teacher1)).thenReturn(teacher1);
         when(teacherMapper.teacherDto(teacher1)).thenReturn(new TeacherDto(
                 1L, 1L,
                 "Wasya", "Wasin", "person1","person1@mail.foo",
@@ -169,21 +175,96 @@ class TeacherServiceTest {
     @Test
     void deleteTeacher() {
         // Given
+        Long teacherId = 1L;
+        Long personId = 1L;
+        Person person = new Person();
+        person.setId(personId);
 
+        Teacher teacher = new Teacher();
+        teacher.setPerson(person);
+
+        when(teacherRepo.findById(teacherId)).thenReturn(Optional.of(teacher));
         // When
-
-        //Then
-
+        underTest.deleteTeacher(teacherId);
+        // Then
+        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+        verify(personService).deleteAvatar(captor.capture());
+        assertThat(captor.getValue()).isEqualTo(personId);
+        verify(teacherRepo).deleteById(teacherId);
     }
 
     @Test
-    void editTeacher() {
+    void willThrowWhenIdNotFoundWhileCreatingTeacher() {
         // Given
-
+        Long id = 1L;
+        when(teacherRepo.findById(id)).thenReturn(Optional.empty());
         // When
+        assertThatThrownBy(() -> underTest.deleteTeacher(id))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Teacher not found with id: " + id);
+        // Then
+        verify(teacherRepo, never()).deleteById(any());
+    }
 
+    @Test
+    void editTeacher() throws IOException {
+        // Given
+        long teacherId = 1;
+        EditTeacherDto editTeacherDto = new EditTeacherDto(
+                1L,
+                "Wasyatka",
+                "wasya@mail.foo",
+                LocalDate.of(2024, 12, 31),
+                Role.PARENT,
+                null
+        );
+        TeacherDto expectedTeacherDto = new TeacherDto(
+                1L,
+                1L,
+                "Wasyatka",
+                "Wasin",
+                "person1",
+                "wasya@mail.foo",
+                LocalDate.of(2024, 12, 31),
+                Person.Gender.MALE,
+                Role.PARENT,
+                LocalDateTime.of(1990, 10, 10, 10, 10),
+                null
+        );
+        when(teacherRepo.findById(teacherId)).thenReturn(Optional.of(teacher1));
+        when(teacherMapper.toEditPerson(teacher1.getPerson(), editTeacherDto)).thenReturn(person1);
+        when(teacherMapper.teacherDto(teacher1)).thenReturn(expectedTeacherDto);
+        // When
+        TeacherDto result = underTest.editTeacher(teacherId, editTeacherDto, null);
         //Then
+        assertThat(result).isEqualTo(expectedTeacherDto);
+        verify(teacherRepo).findById(teacherId);
+        verify(teacherMapper).toEditPerson(teacher1.getPerson(), editTeacherDto);
+        verify(personRepo).save(person1);
+        verify(teacherMapper).teacherDto(teacher1);
+    }
 
+    @Test
+    void willThrowWhenIdNotFoundWhileEditingTeacher() {
+        // Given
+        long teacherId = 1;
+        EditTeacherDto editTeacherDto = new EditTeacherDto(
+                1L,
+                "Wasya",
+                "wasya@mail.foo",
+                LocalDate.of(2024, 12, 31),
+                Role.PARENT,
+                null
+        );
+        when(teacherRepo.findById(teacherId)).thenReturn(Optional.empty());
+        // When
+        assertThatThrownBy(() -> underTest.editTeacher(teacherId, editTeacherDto, null))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("teacher with id [%s] not found".formatted(teacherId));
+        // Then
+        verify(teacherMapper, never()).toEditPerson(any(), any());
+        verify(personRepo, never()).save(any());
+        verify(teacherMapper, never()).teacherDto(any());
     }
 
 
