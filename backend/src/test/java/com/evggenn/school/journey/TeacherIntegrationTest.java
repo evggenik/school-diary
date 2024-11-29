@@ -2,6 +2,7 @@ package com.evggenn.school.journey;
 
 import com.evggenn.school.person.Person;
 import com.evggenn.school.role.Role;
+import com.evggenn.school.teacher.dto.EditTeacherDto;
 import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import org.junit.jupiter.api.Test;
@@ -139,6 +140,205 @@ public class TeacherIntegrationTest {
                 .expectBody(new ParameterizedTypeReference<TeacherDto>() {
                 })
                 .isEqualTo(actualTeacherDto);
+    }
+
+    @Test
+    void canDeleteTeacher() {
+        // create registr. request
+        String firstName = "Wasya";
+        String lastName = "Wasin";
+        String email = "person" + uniqueSuffix +"@mail.foo";
+        String password = "password";
+        Person.Gender gender = Person.Gender.MALE;
+        Role role = Role.STUDENT;
+        String username = "person" + uniqueSuffix;
+        LocalDate birthdate = LocalDate.of(1990, 10, 10);
+        String avatarUrl = "uploads/" + username + "/avatar.jpg";
+
+        NewTeacherDto newTeacherDto = new NewTeacherDto(
+                firstName,
+                lastName,
+                email,
+                password,
+                gender,
+                role,
+                username,
+                birthdate,
+                avatarUrl
+        );
+        // Создаем файл для аватара (пустой файл)
+        byte[] avatarBytes = new byte[]{};
+        MultipartFile avatarFile = new MockMultipartFile(
+                "avatarFile",
+                "avatar.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                avatarBytes
+        );
+
+        // send post request
+        webTestClient.post()
+                .uri(TEACHER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("newTeacherDto", newTeacherDto)
+                        .with("avatarFile", avatarFile.getResource()))
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        // get all teachers
+        List<TeacherDto> allTeachers = webTestClient.get()
+                .uri(TEACHER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<TeacherDto>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+
+
+        TeacherDto createdTeacher = allTeachers.stream()
+                .filter(teacherDto -> teacherDto.email().equals(email))
+                .findFirst()
+                .orElseThrow();
+        long personId = createdTeacher.personId();
+        long id = createdTeacher.id();
+        LocalDateTime createdAt = createdTeacher.createdAt();
+
+        // delete teacher
+        webTestClient.delete()
+                .uri(TEACHER_URI + "/{id}", id)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isNoContent();
+
+        // get teacher by id
+        webTestClient.get()
+                .uri(TEACHER_URI + "/{id}", id)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+    }
+
+    @Test
+    void canUpdateTeacher() {
+        // create registr. request
+        String firstName = "Wasya";
+        String lastName = "Wasin";
+        String email = "person" + uniqueSuffix +"@mail.foo";
+        String password = "password";
+        Person.Gender gender = Person.Gender.MALE;
+        Role role = Role.STUDENT;
+        String username = "person" + uniqueSuffix;
+        LocalDate birthdate = LocalDate.of(1990, 10, 10);
+        String avatarUrl = "uploads/" + username + "/avatar.jpg";
+
+        NewTeacherDto newTeacherDto = new NewTeacherDto(
+                firstName,
+                lastName,
+                email,
+                password,
+                gender,
+                role,
+                username,
+                birthdate,
+                avatarUrl
+        );
+        // Создаем файл для аватара (пустой файл)
+        byte[] avatarBytes = new byte[]{};
+        MultipartFile avatarFile = new MockMultipartFile(
+                "avatarFile",
+                "avatar.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                avatarBytes
+        );
+
+        // send post request
+        webTestClient.post()
+                .uri(TEACHER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("newTeacherDto", newTeacherDto)
+                        .with("avatarFile", avatarFile.getResource()))
+                .exchange()
+                .expectStatus()
+                .isOk();
+
+        // get all teachers
+        List<TeacherDto> allTeachers = webTestClient.get()
+                .uri(TEACHER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<TeacherDto>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // update teacher by id
+        TeacherDto createdTeacher = allTeachers.stream()
+                .filter(teacherDto -> teacherDto.email().equals(email))
+                .findFirst()
+                .orElseThrow();
+        long personId = createdTeacher.personId();
+        long id = createdTeacher.id();
+        LocalDateTime createdAt = createdTeacher.createdAt();
+
+        LocalDate newBirthdate = LocalDate.of(1998, 2, 20);
+
+        EditTeacherDto editTeacherDto = new EditTeacherDto(
+                personId,
+                username,
+                email,
+                newBirthdate,
+                role,
+                avatarUrl
+        );
+
+
+        webTestClient.put()
+            .uri(TEACHER_URI + "/{id}", id)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .body(BodyInserters.fromMultipartData("editTeacherDto", editTeacherDto)
+                    .with("avatarFile", avatarFile.getResource()))
+            .exchange()
+            .expectStatus()
+            .isOk();
+
+
+        TeacherDto updatedTeacherDto = webTestClient.get()
+            .uri(TEACHER_URI + "/{id}", id)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(TeacherDto.class)
+            .returnResult()
+            .getResponseBody();
+
+        TeacherDto expectedTeacherDto = new TeacherDto(
+            id,
+            personId,
+            firstName,
+            lastName,
+            username,
+            email,
+            newBirthdate,
+            gender,
+            role,
+            createdAt,
+            avatarUrl
+        );
+
+        assertThat(updatedTeacherDto).isEqualTo(expectedTeacherDto);
 
     }
+
 }
