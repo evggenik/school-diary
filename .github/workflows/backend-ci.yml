@@ -1,0 +1,37 @@
+name: CI - Build Backend
+
+on:
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - 'backend/**'  # Запускается только при изменениях в директории backend/
+  workflow_dispatch:
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'  # Укажите нужную версию JDK
+
+      - name: Build backend Docker image
+        working-directory: backend
+        run: |
+          mvn clean package
+          docker build -t your-dockerhub-username/backend-image .
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push backend Docker image
+        run: |
+          docker push your-dockerhub-username/backend-image
