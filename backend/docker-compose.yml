@@ -1,0 +1,36 @@
+version: '2.2'
+
+services:
+  postgres:
+    container_name: postgres_db
+    image: postgres:15.1
+    environment:
+      POSTGRES_USER: ${DOCKER_USERNAME}
+      POSTGRES_PASSWORD: ${DOCKER_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5332:5432"
+    restart: unless-stopped
+    networks:
+      - postgres_db
+
+  school-api:
+    container_name: school-api
+    image: evvgen/school
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/diary
+    ports:
+      - "8088:8080"
+    networks:
+      - postgres_db
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  postgres:
+
+networks:
+  postgres_db:
