@@ -37,6 +37,9 @@ jobs:
           cache: 'maven'
 
       - name: Build and run Unit/Integration tests with Maven
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: mvn -ntp -B verify
 #          docker build -t your-dockerhub-username/backend-image .
 #
