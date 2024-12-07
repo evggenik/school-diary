@@ -11,10 +11,6 @@
 	<groupId>com.evggenn</groupId>
 	<artifactId>school</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<organization>
-		<name>evvgen</name>
-		<url>https://evvgen.com</url>
-	</organization>
 	<name>school</name>
 	<description>Pet project for Spring Boot</description>
 	<url/>
@@ -32,7 +28,10 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
-<!--		<docker.username>evvgen</docker.username>-->
+		<docker.username>evvgen</docker.username>
+		<docker.image.name>school-api</docker.image.name>
+		<docker.image.tag/>
+
 	</properties>
 
 	<dependencies>
@@ -164,15 +163,15 @@
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>jib</id>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<phase>package</phase> <!-- Указываем, что Jib должен выполняться в фазе package -->
-					</execution>
-				</executions>
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>jib</id>-->
+<!--						<goals>-->
+<!--							<goal>build</goal>-->
+<!--						</goals>-->
+<!--						<phase>package</phase>-->
+<!--					</execution>-->
+<!--				</executions>-->
 				<configuration>
 					<from>
 						<image>eclipse-temurin:17</image>
@@ -190,7 +189,7 @@
 						</platforms>
 					</from>
 					<to>
-						<image>${organization.name}/${project.artifactId}:${project.version}</image>
+						<image>${docker.username}/${docker.image.name}:${docker.image.tag}</image>
 						<auth>
 							<!--suppress UnresolvedMavenProperty -->
 							<username>${env.DOCKER_USERNAME}</username>
