@@ -175,12 +175,10 @@
 				<configuration>
 					<from>
 						<image>eclipse-temurin:17</image>
-						<auth>
-							<!--suppress UnresolvedMavenProperty -->
-							<username>${env.DOCKER_USERNAME}</username>
-							<!--suppress UnresolvedMavenProperty -->
-							<password>${env.DOCKER_PASSWORD}</password>
-						</auth>
+<!--						<auth>-->
+<!--							<username>${env.DOCKER_USERNAME}</username>-->
+<!--							<password>${env.DOCKER_PASSWORD}</password>-->
+<!--						</auth>-->
 						<platforms>
 							<platform>
 								<architecture>amd64</architecture>
@@ -190,12 +188,10 @@
 					</from>
 					<to>
 						<image>${docker.username}/${docker.image.name}:${docker.image.tag}</image>
-						<auth>
-							<!--suppress UnresolvedMavenProperty -->
-							<username>${env.DOCKER_USERNAME}</username>
-							<!--suppress UnresolvedMavenProperty -->
-							<password>${env.DOCKER_PASSWORD}</password>
-						</auth>
+<!--						<auth>-->
+<!--							<username>${env.DOCKER_USERNAME}</username>-->
+<!--							<password>${env.DOCKER_PASSWORD}</password>-->
+<!--						</auth>-->
 						<tags>
 							<tag>latest</tag>
 						</tags>
