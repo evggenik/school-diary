@@ -38,11 +38,6 @@ jobs:
         run: |
           echo "POSTGRES_USERNAME=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
-      - name: Print environment variables
-        run: |
-          echo "SPRING_DATASOURCE_URL=${{ env.SPRING_DATASOURCE_URL }}"
-          echo "POSTGRES_USERNAME=${{ secrets.POSTGRES_USER }}"
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
