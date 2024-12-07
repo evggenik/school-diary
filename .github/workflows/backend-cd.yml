@@ -36,7 +36,6 @@ jobs:
           cache: 'maven'
       - name: Set environment variables
         run: |
-          echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5332/diary" >> $GITHUB_ENV
           echo "POSTGRES_USERNAME=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
       - name: Print environment variables
@@ -51,9 +50,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
       - name: Set build number
         id: build-number
-        run: echo "BUILD_NUMBER=$(date '+%d.%m.%Y.%H.%M.%S')" >> GITHUB_OUTPUT
-      - name: Log Docker Image Tag
-        run: echo "Docker Image Tag ${{ steps.build-number.outputs.BUILD_NUMBER }}"
+        run: echo "BUILD_NUMBER=$(date '+%d.%m.%Y.%H.%M.%S')" >> $GITHUB_OUTPUT
       - name: Build Package Push with Maven
         run: mvn -ntp -B verify -Ddocker.image.tag=${{ steps.build-number.outputs.BUILD_NUMBER }} jib:build
 

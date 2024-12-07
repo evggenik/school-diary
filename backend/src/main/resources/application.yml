@@ -23,7 +23,7 @@ spring:
     name: school
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5332/diary}
+    url: jdbc:postgresql://localhost:5332/diary
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
 
