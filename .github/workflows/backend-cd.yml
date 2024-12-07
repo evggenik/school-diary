@@ -36,7 +36,7 @@ jobs:
           cache: 'maven'
       - name: Set environment variables
         run: |
-          echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/diary" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5332/diary" >> $GITHUB_ENV
           echo "POSTGRES_USERNAME=${{ secrets.POSTGRES_USER }}" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> $GITHUB_ENV
       - name: Print environment variables
