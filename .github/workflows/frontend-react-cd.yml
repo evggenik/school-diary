@@ -31,4 +31,4 @@ jobs:
           REPO=school-react \
           TAG=${{ steps.build-number.outputs.BUILD_NUMBER }} \
           ../.cicd/build-publish.sh . \
-          --build-arg api_base_url=https://school-api-mt8g.onrender.com:8080
+          --build-arg api_base_url=https://school-api-mt8g.onrender.com
