@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
       - name: Docker Build and push
         run: |
-          chmod +x ../../.ci/build-publish.sh
+          chmod +x ../.cicd/build-publish.sh
           USERNAME=evvgen \
           REPO=school-react \
           TAG=${{ steps.build-number.outputs.BUILD_NUMBER }} \
