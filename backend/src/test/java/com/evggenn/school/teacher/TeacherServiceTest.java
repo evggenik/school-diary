@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -36,6 +37,8 @@ class TeacherServiceTest {
     private PersonRepo personRepo;
     @Mock
     private TeacherMapper teacherMapper;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private PersonService personService;
@@ -51,11 +54,12 @@ class TeacherServiceTest {
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
         underTest = new TeacherService(teacherRepo, personRepo,
-                teacherMapper, personService);
+                teacherMapper, personService, passwordEncoder);
 
         person1 = new Person();
         person1.setId(1L);
         person1.setUserName("person1");
+        person1.setPassword("password");
         person1.setEmail("person1@mail.foo");
         person1.setBirthDate(LocalDate.of(1990, 10, 10));
         person1.setGender(Person.Gender.MALE);
@@ -148,7 +152,12 @@ class TeacherServiceTest {
                 "person1", LocalDate.of(1990, 10, 10),
                 null
         );
+
+        String passwordHash = "d3g9./l02kjfl;";
+
+
         when(teacherMapper.toPerson(newTeacherDto1)).thenReturn(person1);
+        when(passwordEncoder.encode("password")).thenReturn(passwordHash);
         when(personRepo.save(person1)).thenReturn(person1);
         when(teacherMapper.toTeacher(newTeacherDto1, person1)).thenReturn(teacher1);
         when(teacherRepo.save(teacher1)).thenReturn(teacher1);
@@ -164,6 +173,14 @@ class TeacherServiceTest {
         TeacherDto result = underTest.createTeacher(newTeacherDto1, null);
 
         // Then
+        ArgumentCaptor<Person> personArgumentCaptor = ArgumentCaptor.forClass(
+                Person.class
+        );
+
+        verify(personRepo).save(personArgumentCaptor.capture());
+        Person capturedPerson = personArgumentCaptor.getValue();
+        assertThat(capturedPerson.getPassword()).isEqualTo(passwordHash);
+
         assertNotNull(result);
         verify(teacherMapper).toPerson(newTeacherDto1);
         verify(personRepo).save(person1);

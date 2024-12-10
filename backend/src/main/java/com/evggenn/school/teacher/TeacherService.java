@@ -9,6 +9,7 @@ import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ public class TeacherService {
     private final PersonRepo personRepo;
     private final TeacherMapper teacherMapper;
     private final PersonService personService;
+    private final PasswordEncoder passwordEncoder;
 
     private void updateAvatarIfPresent(Person person,
                                        MultipartFile avatarFile) throws IOException {
@@ -53,6 +55,7 @@ public class TeacherService {
     public TeacherDto createTeacher(NewTeacherDto newTeacherDto, MultipartFile avatarFile) throws IOException {
 
         Person person = teacherMapper.toPerson(newTeacherDto);
+        person.setPassword(passwordEncoder.encode(person.getPassword()));
         Person savedPerson = personRepo.save(person);
 
         updateAvatarIfPresent(person, avatarFile);
