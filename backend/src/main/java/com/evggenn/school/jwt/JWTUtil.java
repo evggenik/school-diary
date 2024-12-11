@@ -1,5 +1,6 @@
 package com.evggenn.school.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -44,7 +45,20 @@ public class JWTUtil {
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
         return token;
+    }
 
+    public String getSubject(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    private Claims getClaims(String token) {
+        Claims claims = Jwts
+                .parser()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getPayload();
+        return claims;
     }
 
     private Key getSigningKey() {
@@ -52,6 +66,13 @@ public class JWTUtil {
     }
 
 
+    public boolean isTokenValid(String jwt, String username) {
+        String subject = getSubject(jwt);
+        return subject.equals(username) && !isTokenExpired(jwt);
+    }
 
-
+    private boolean isTokenExpired(String jwt) {
+        Date today = Date.from(Instant.now());
+        return getClaims(jwt).getExpiration().before(today);
+    }
 }
