@@ -23,7 +23,9 @@ public class SecurityFilterChainConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
     public SecurityFilterChainConfig(
-            JWTAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider, AuthenticationEntryPoint authenticationEntryPoint) {
+            JWTAuthenticationFilter jwtAuthenticationFilter,
+            AuthenticationProvider authProvider,
+            AuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authProvider = authProvider;
         this.authenticationEntryPoint = authenticationEntryPoint;
@@ -35,7 +37,8 @@ public class SecurityFilterChainConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/teachers")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/teachers",
+                                "/api/v1/auth/login")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

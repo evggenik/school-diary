@@ -1,5 +1,6 @@
 package com.evggenn.school.jwt;
 
+import com.evggenn.school.role.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +12,7 @@ import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -27,10 +29,13 @@ public class JWTUtil {
         return issueToken(subject, Map.of("Scopes", scopes));
     }
 
+    public String issueToken(String subject, List<String> scopes) {
+        return issueToken(subject, Map.of("Scopes", scopes));
+    }
+
     public String issueToken(
             String subject,
             Map<String, Object> claims) {
-
         String token = Jwts
                 .builder()
                 .claims(claims)
