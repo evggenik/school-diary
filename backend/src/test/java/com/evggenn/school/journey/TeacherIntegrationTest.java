@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class TeacherIntegrationTest {
@@ -66,7 +68,7 @@ public class TeacherIntegrationTest {
         );
 
         // send post request
-        webTestClient.post()
+        String jwtToken = webTestClient.post()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -74,12 +76,17 @@ public class TeacherIntegrationTest {
                         .with("avatarFile", avatarFile.getResource()))
                 .exchange()
                 .expectStatus()
-                .isOk();
+                .isOk()
+                .returnResult(Void.class)
+                .getResponseHeaders()
+                .get(AUTHORIZATION)
+                .get(0);
 
         // get all teachers
         List<TeacherDto> allTeachers = webTestClient.get()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -134,6 +141,7 @@ public class TeacherIntegrationTest {
         webTestClient.get()
                 .uri(TEACHER_URI + "/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -166,6 +174,17 @@ public class TeacherIntegrationTest {
                 birthdate,
                 avatarUrl
         );
+        NewTeacherDto newTeacherDto2 = new NewTeacherDto(
+                firstName,
+                lastName,
+                email + "foo",
+                password,
+                gender,
+                role,
+                username + "foo",
+                birthdate,
+                avatarUrl
+        );
         // Создаем файл для аватара (пустой файл)
         byte[] avatarBytes = new byte[]{};
         MultipartFile avatarFile = new MockMultipartFile(
@@ -175,7 +194,7 @@ public class TeacherIntegrationTest {
                 avatarBytes
         );
 
-        // send post request
+        // send post request to create teacher 1
         webTestClient.post()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
@@ -186,10 +205,27 @@ public class TeacherIntegrationTest {
                 .expectStatus()
                 .isOk();
 
+
+        // send post request to create teacher 2
+        String jwtToken = webTestClient.post()
+                .uri(TEACHER_URI)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData("newTeacherDto", newTeacherDto2)
+                        .with("avatarFile", avatarFile.getResource()))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .returnResult(Void.class)
+                .getResponseHeaders()
+                .get(AUTHORIZATION)
+                .get(0);
+
         // get all teachers
         List<TeacherDto> allTeachers = webTestClient.get()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -208,18 +244,20 @@ public class TeacherIntegrationTest {
         long id = createdTeacher.id();
         LocalDateTime createdAt = createdTeacher.createdAt();
 
-        // delete teacher
+        // teacher1 deletes teacher2
         webTestClient.delete()
                 .uri(TEACHER_URI + "/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isNoContent();
 
-        // get teacher by id
+        // gets teacher2 by id
         webTestClient.get()
                 .uri(TEACHER_URI + "/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isNotFound();
@@ -259,7 +297,7 @@ public class TeacherIntegrationTest {
         );
 
         // send post request
-        webTestClient.post()
+        String jwtToken = webTestClient.post()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -267,12 +305,17 @@ public class TeacherIntegrationTest {
                         .with("avatarFile", avatarFile.getResource()))
                 .exchange()
                 .expectStatus()
-                .isOk();
+                .isOk()
+                .returnResult(Void.class)
+                .getResponseHeaders()
+                .get(AUTHORIZATION)
+                .get(0);
 
         // get all teachers
         List<TeacherDto> allTeachers = webTestClient.get()
                 .uri(TEACHER_URI)
                 .accept(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -305,6 +348,7 @@ public class TeacherIntegrationTest {
         webTestClient.put()
             .uri(TEACHER_URI + "/{id}", id)
             .accept(MediaType.APPLICATION_JSON)
+            .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(BodyInserters.fromMultipartData("editTeacherDto", editTeacherDto)
                     .with("avatarFile", avatarFile.getResource()))
@@ -316,6 +360,7 @@ public class TeacherIntegrationTest {
         TeacherDto updatedTeacherDto = webTestClient.get()
             .uri(TEACHER_URI + "/{id}", id)
             .accept(MediaType.APPLICATION_JSON)
+            .header(AUTHORIZATION, String.format("Bearer %s", jwtToken))
             .exchange()
             .expectStatus()
             .isOk()

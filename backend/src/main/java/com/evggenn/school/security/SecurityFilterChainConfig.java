@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,11 +20,13 @@ public class SecurityFilterChainConfig {
 
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authProvider;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     public SecurityFilterChainConfig(
-            JWTAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider) {
+            JWTAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider, AuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authProvider = authProvider;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
 
@@ -38,7 +41,9 @@ public class SecurityFilterChainConfig {
                         .authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handler->handler.authenticationEntryPoint(authenticationEntryPoint));
+
         return http.build();
     }
 
