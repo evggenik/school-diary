@@ -27,6 +27,9 @@ public class DelegatedAuthEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException)
             throws IOException, ServletException {
 
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.getWriter().write("Unauthorized: " + authException.getMessage());
+
         handlerExceptionResolver.resolveException(
                 request,
                 response,
