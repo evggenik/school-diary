@@ -8,7 +8,6 @@ logging:
     com.evggenn.school.teacher: INFO
 
 cors:
-#  allowed-origins: "http://localhost:5173"
   allowed-origins: "*"
   allowed-methods: "*"
   allowed-headers: "*"
