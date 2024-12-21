@@ -16,12 +16,13 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  VStack,
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons'
+import { useAuth } from '../context/AuthContext.jsx'
 
-// interface Props {
-//   children: React.ReactNode
-// }
+
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Links = ['Teachers', 'Students', 'Parents']
 
@@ -48,7 +49,9 @@ const NavLink = ({ children, onClick }) => {
   )
 }
 
-export default function Simple({children, setShowTeachers, setSelectedTeacher}) {
+export default function Simple({ children, setShowTeachers, setSelectedTeacher }) {
+  
+  const { logOut, person } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const handleNavLinkClick = (link) => {
     if (link === 'Teachers') {
@@ -59,9 +62,10 @@ export default function Simple({children, setShowTeachers, setSelectedTeacher}) 
     }
     onClose(); // Закрываем меню после клика
   };
-
+  // console.log(`${baseUrl}/${person?.avatarUrl}`);
   return (
     <>
+      
       <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
@@ -93,15 +97,20 @@ export default function Simple({children, setShowTeachers, setSelectedTeacher}) 
                 <Avatar
                   size={'sm'}
                   src={
-                    'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+                    `${baseUrl}/${person?.avatarUrl}`
                   }
                 />
+                {/* <Text fontSize="sm">{person?.username}</Text>
+                <Text fontSize="sm">{person?.roles}</Text> */}
+                
               </MenuButton>
               <MenuList>
                 <MenuItem>Link 1</MenuItem>
                 <MenuItem>Link 2</MenuItem>
                 <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
+                <MenuItem onClick={logOut}>
+                  Log out
+                </MenuItem>
               </MenuList>
             </Menu>
           </Flex>

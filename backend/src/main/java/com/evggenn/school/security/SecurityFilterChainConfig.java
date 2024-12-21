@@ -23,6 +23,7 @@ public class SecurityFilterChainConfig {
     private final AuthenticationProvider authProvider;
     private final AuthenticationEntryPoint authenticationEntryPoint;
 
+
     public SecurityFilterChainConfig(
             JWTAuthenticationFilter jwtAuthenticationFilter,
             AuthenticationProvider authProvider,
@@ -41,6 +42,8 @@ public class SecurityFilterChainConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/teachers",
                                 "/api/v1/auth/login")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET,"/uploads/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
