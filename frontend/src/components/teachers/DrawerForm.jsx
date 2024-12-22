@@ -11,7 +11,7 @@ import {
     useDisclosure
 } from '@chakra-ui/react';
 import React from 'react';
-import CreateTeacherForm from './CreateTeacherForm';
+import CreateTeacherForm from '../shared/CreateTeacherForm';
 
 export default function DrawerForm({fetchTeachers}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -33,7 +33,7 @@ export default function DrawerForm({fetchTeachers}) {
             <DrawerHeader>Create new teacher</DrawerHeader>
   
             <DrawerBody>
-          <CreateTeacherForm fetchTeachers={fetchTeachers} onClose={onClose}/>
+          <CreateTeacherForm onSuccess={fetchTeachers} onClose={onClose}/>
             </DrawerBody>
   
             <DrawerFooter>
