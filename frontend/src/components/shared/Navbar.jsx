@@ -100,8 +100,8 @@ export default function Simple({ children, setShowTeachers, setSelectedTeacher }
                     `${baseUrl}/${person?.avatarUrl}`
                   }
                 />
-                {/* <Text fontSize="sm">{person?.username}</Text>
-                <Text fontSize="sm">{person?.roles}</Text> */}
+                <Text fontSize="sm">{person?.username}</Text>
+                <Text fontSize="sm">{person?.roles}</Text>
                 
               </MenuButton>
               <MenuList>

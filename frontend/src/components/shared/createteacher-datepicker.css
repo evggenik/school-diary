@@ -1,0 +1,4 @@
+.react-datepicker__year-dropdown {
+    max-height: 200px; /* Установите максимальную высоту */
+    overflow-y: auto; /* Включите вертикальную прокрутку */
+  }
