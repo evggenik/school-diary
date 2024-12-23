@@ -101,7 +101,11 @@ export default function Simple({ children, setShowTeachers, setSelectedTeacher }
                   }
                 />
                 <Text fontSize="sm">{person?.username}</Text>
-                <Text fontSize="sm">{person?.roles}</Text>
+                {person?.roles.map((role, id) => (
+                  <Text key={id} fontSize="xs" color="gray.600">
+                    {role}
+                  </Text>
+                ))}
                 
               </MenuButton>
               <MenuList>
