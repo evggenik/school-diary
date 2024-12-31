@@ -9,6 +9,8 @@ import com.evggenn.school.teacher.dto.NewTeacherDto;
 import com.evggenn.school.teacher.dto.TeacherDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,12 +45,10 @@ public class TeacherService {
         return teacherMapper.teacherDto(teacher);
     }
 
-//    Если много учителей, возможно, стоит рассмотреть возможность пагинации
-//    или фильтрации, чтобы избежать загрузки слишком большого объема данных
-//    за один раз.
+//    временно ограничим вывод первыми 20 пользователями...
     public List<TeacherDto> getAllTeacher() {
-        List<Teacher> allTeachers = teacherRepo.findAll();
-        return teacherMapper.allTeacherDto(allTeachers);
+        Page<Teacher> page = teacherRepo.findAll(Pageable.ofSize(20));
+        return teacherMapper.allTeacherDto(page.getContent());
     }
 
     @Transactional
