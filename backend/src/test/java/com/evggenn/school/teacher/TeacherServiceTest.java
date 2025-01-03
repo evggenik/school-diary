@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
@@ -132,12 +134,18 @@ class TeacherServiceTest {
     void getAllTeacher() {
         // Given
         expectedTeacherDtoList = teacherList.stream().map(t -> teacherMapper.teacherDto(t)).toList();
+        Page<Teacher> page = mock(Page.class);
+
+
         // When
-        when(teacherRepo.findAll()).thenReturn(teacherList);
+        when(page.getContent()).thenReturn(teacherList);
+        when(teacherRepo.findAll(any(Pageable.class))).thenReturn(page);
         when(teacherMapper.allTeacherDto(teacherList)).thenReturn(expectedTeacherDtoList);
         List<TeacherDto> resultTeacherDtoList = underTest.getAllTeacher();
         //Then
-        verify(teacherRepo).findAll();
+        ArgumentCaptor<Pageable> pageArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
+        verify(teacherRepo).findAll(pageArgumentCaptor.capture());
+        assertThat(pageArgumentCaptor.getValue()).isEqualTo(Pageable.ofSize(20));
         verify(teacherMapper).allTeacherDto(teacherList);
         assertEquals(expectedTeacherDtoList, resultTeacherDtoList);
 
